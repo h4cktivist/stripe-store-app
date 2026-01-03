@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Cart</title>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+
+<h1>Your cart</h1>
+
+<table border="1" cellpadding="8">
+    <tr>
+        <th>Item</th>
+        <th>Price</th>
+        <th>Qty</th>
+        <th>Total</th>
+    </tr>
+
+    {% for order_item in order.items.all %}
+    <tr>
+        <td>{{ order_item.item.name }}</td>
+        <td>{{ order_item.item.price }} {{ order.currency|upper }}</td>
+        <td>{{ order_item.quantity }}</td>
+        <td>{{ order_item.total_price }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<p><strong>Subtotal:</strong> {{ order.subtotal }}</p>
+
+{% if order.discounts.exists %}
+    <p><strong>Discounts:</strong></p>
+    <ul>
+        {% for discount in order.discounts.all %}
+            <li>- {{ discount.value }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if order.taxes.exists %}
+    <p><strong>Taxes:</strong></p>
+    <ul>
+        {% for tax in order.taxes.all %}
+            <li>+ {{ tax.rate }}%</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<p><strong>Total:</strong> {{ order.total }} {{ order.currency|upper }}</p>
+
+<button id="pay-button">Pay</button>
+
+<script>
+    const stripe = Stripe("{{ stripe_public_key }}");
+    const payBtn = document.getElementById("pay-button");
+
+    payBtn.onclick = () => {
+        fetch("/checkout/")
+            .then(res => res.json())
+            .then(data => stripe.redirectToCheckout({ sessionId: data.id }));
+    };
+</script>
+
+</body>
+</html>

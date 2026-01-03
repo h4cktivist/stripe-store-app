@@ -11,10 +11,13 @@
 <p>Price: {{ item.price }} {{ item.currency|upper }}</p>
 
 <button id="buy-button">Buy</button>
+<button id="add-button">Add to cart</button>
+<a href="/cart/">Go to cart</a>
 
 <script>
     const stripe = Stripe("{{ stripe_public_key }}");
     const buyButton = document.getElementById("buy-button");
+    const addBtn = document.getElementById("add-button");
 
     buyButton.addEventListener("click", function () {
         fetch("/buy/{{ item.id }}/")
@@ -22,6 +25,12 @@
             .then(data => {
                 return stripe.redirectToCheckout({ sessionId: data.id });
             });
+    });
+
+    addBtn.addEventListener("click", function () {
+        fetch("/cart/add/{{ item.id }}/")
+            .then(res => res.json())
+            .then(data => alert("Added to cart"));
     });
 </script>
 
