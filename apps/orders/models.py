@@ -22,18 +22,6 @@ class Order(models.Model):
     def __str__(self):
         return f'Order #{self.pk}'
 
-    def save(self, *args, **kwargs):
-        currencies = {
-            item.item.currency for item in self.items.all()
-        }
-        if currencies and len(currencies) > 1:
-            raise ValueError('Order cannot contain items with different currencies')
-
-        if currencies:
-            self.currency = currencies.pop()
-
-        super().save(*args, **kwargs)
-
     @property
     def subtotal(self) -> Decimal:
         return sum(

@@ -64,7 +64,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -138,3 +138,15 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+STRIPE_KEYS = {
+    'usd': {
+        'public': env('STRIPE_PUBLIC_KEY_USD'),
+        'secret': env('STRIPE_SECRET_KEY_USD'),
+    },
+    'eur': {
+        'public': env('STRIPE_PUBLIC_KEY_EUR'),
+        'secret': env('STRIPE_SECRET_KEY_EUR'),
+    },
+}
+
